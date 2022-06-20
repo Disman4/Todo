@@ -89,7 +89,7 @@ class ToDoListViewController: UITableViewController {
     }
     
     
-    //MARK: - Model Manipulation methods
+    //MARK: - Model Manipulation methods (CRUD)
     
     // save data in a pList file
     func saveData()  {
@@ -102,15 +102,53 @@ class ToDoListViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
+    
     // load data in a pList file
-    func loadItems() {
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
+    func loadItems(with request : NSFetchRequest<Item> = Item.fetchRequest()) {
+        //let request : NSFetchRequest<Item> = Item.fetchRequest()
         do{
             itemArray = try context.fetch(request)
         }catch{
             print("error fetching data from context \(error)")
         }
     }
+}
+
+//MARK: - SearchBar Delegate Methods
+extension ToDoListViewController:  UISearchBarDelegate{
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        // create new request
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        
+        //modify with query
+        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        
+        request.predicate = predicate //
+        
+        // sort filtered data from the query
+        let sortDescriptor  = NSSortDescriptor(key: "title", ascending: true)
+        
+        request.sortDescriptors = [sortDescriptor]
+        
+        //pass request into load items function (with - external parameter)
+        loadItems(with: request)
+        
+    }
+    
+    
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+            
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
+    
 }
 
 
