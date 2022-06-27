@@ -11,6 +11,6 @@ import RealmSwift
 class Category: Object{
     @objc dynamic var name:  String = ""
     
-    //Forward relationship for the 
+    //Forward relationship for database relationships
     let items = List<Item>()
 }
