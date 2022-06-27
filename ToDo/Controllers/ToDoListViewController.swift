@@ -8,7 +8,7 @@
 import UIKit
 import RealmSwift
 
-class ToDoListViewController: UITableViewController {
+class ToDoListViewController: SwipeTableViewController {
     
     var toDoItems: Results<Item>?
     let realm = try! Realm()
@@ -18,8 +18,6 @@ class ToDoListViewController: UITableViewController {
             loadItems()
         }
     }
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,7 +35,7 @@ class ToDoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let items = toDoItems?[indexPath.row] {
             
@@ -59,7 +57,7 @@ class ToDoListViewController: UITableViewController {
         if let item = toDoItems? [indexPath.row]{
             do{
                 try realm.write{
-                   // realm.delete(item)
+                    // realm.delete(item)
                     item.done  = !item.done
                 }
             }catch{
@@ -112,29 +110,41 @@ class ToDoListViewController: UITableViewController {
         
         tableView.reloadData()
     }
-}
-
-//MARK: - SearchBar Delegate Methods
-    extension ToDoListViewController:  UISearchBarDelegate{
-
-        func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-            
-            toDoItems = toDoItems?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
-
-            tableView.reloadData()
-        }
-
-
-        func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-            if searchBar.text?.count == 0 {
-                loadItems()
-
-                DispatchQueue.main.async {
-                    searchBar.resignFirstResponder()
+    
+    override func updateModel(at indexPath: IndexPath) {
+        if let item = toDoItems?[indexPath.row]{
+            do{
+                try realm.write {
+                    realm.delete(item)
                 }
+            }catch{
+                print("error deleting item, \(error)")
             }
         }
     }
+}
+
+//MARK: - SearchBar Delegate Methods
+extension ToDoListViewController:  UISearchBarDelegate{
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        toDoItems = toDoItems?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
+        
+        tableView.reloadData()
+    }
+    
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+            
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
+}
 
 
 

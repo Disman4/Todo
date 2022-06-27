@@ -14,13 +14,14 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
         super.viewDidLoad()
 
         
+        tableView.rowHeight = 80
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! SwipeTableViewCell
         
-        cell.delegate.self
+        cell.delegate = self
         
         return cell
     }
@@ -32,7 +33,6 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
             // handle action by updating model with deletion
             print("delete cell")
             self.updateModel(at: indexPath)
-//           
             
         }
 
@@ -49,7 +49,7 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
     }
     
     func updateModel(at indexPath: IndexPath){
-        //update model 
+        //update data model 
     }
 }
     
