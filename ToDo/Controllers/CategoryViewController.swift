@@ -9,6 +9,7 @@ import UIKit
 import RealmSwift
 import ChameleonFramework
 
+//Inherited from the SwipeTableViewController Super Class
 class CategoryViewController: SwipeTableViewController {
     
     let realm = try! Realm()
@@ -24,6 +25,7 @@ class CategoryViewController: SwipeTableViewController {
         tableView.reloadData()
         
     }
+    
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
@@ -59,10 +61,9 @@ class CategoryViewController: SwipeTableViewController {
         return categories?.count ?? 1
     }
     
-    
+    // populate cell with the data that is added by user
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-    
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         cell.textLabel?.text = categories?[indexPath.row].name ?? "no categories added yet"
@@ -73,7 +74,7 @@ class CategoryViewController: SwipeTableViewController {
     
     //MARK: - Data Manipulation Methods
     
-    // save data in a pList file
+    // save category data into the realm database
     func save(category: Category)  {
         do{
             try realm.write(){
@@ -86,12 +87,15 @@ class CategoryViewController: SwipeTableViewController {
     }
     
     
+    // load data from the database when app is opened
     func loadCategories() {
         categories = realm.objects(Category.self)
         
         tableView.reloadData()
     }
     
+    //use the Realm API .delete to delete obkects from the database
+    //overriden from the updateModel function in the superclass
     override func updateModel(at indexPath: IndexPath) {
         if let categoryForDeletion = self.categories?[indexPath.row]{
             do{
@@ -101,15 +105,18 @@ class CategoryViewController: SwipeTableViewController {
             }catch{
                 print("Error deleting category, \(error)")
             }
-            
         }
-        
     }
+    
     //MARK: - TableView Delegate Methods
+    
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //perform segueway into TodoList of coresponding category
         performSegue(withIdentifier: "goToItems", sender: self)
     }
     
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! ToDoListViewController
         

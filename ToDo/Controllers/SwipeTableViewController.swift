@@ -13,8 +13,9 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        
+        //styling 
         tableView.rowHeight = 80
+    
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -42,11 +43,13 @@ class SwipeTableViewController: UITableViewController, SwipeTableViewCellDelegat
         return [deleteAction]
     }
     
+    
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
         var options = SwipeOptions()
         options.expansionStyle = .destructive
         return options
     }
+    
     
     func updateModel(at indexPath: IndexPath){
         //update data model 
