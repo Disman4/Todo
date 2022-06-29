@@ -7,15 +7,18 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class ToDoListViewController: SwipeTableViewController {
     
     var toDoItems: Results<Item>?
     let realm = try! Realm()
     
+    //pass category of the selected category
     var selectedCategory: Category? {
         didSet{
             loadItems()
+            
         }
     }
     
@@ -23,7 +26,17 @@ class ToDoListViewController: SwipeTableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        tableView.separatorStyle = .none
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if let colorHex = selectedCategory?.color {
+            title = selectedCategory!.name
+            
+            guard let navBar = navigationController?.navigationBar else {fatalError("no navigation controller exists")}
+            navBar.barTintColor = UIColor(hexString: colorHex)
+        }
     }
     
     
@@ -40,6 +53,15 @@ class ToDoListViewController: SwipeTableViewController {
         if let items = toDoItems?[indexPath.row] {
             
             cell.textLabel?.text = items.title
+            
+            // make color gradient using Chameleon API
+            if let color = UIColor(hexString: selectedCategory!.color)?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(toDoItems!.count)){
+                cell.backgroundColor = color
+                
+                //color contrast for the text to the background color
+                cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+            }
+            
             
             //ternary operator ==>
             // value = condition ? valueIfTrue : valueIfFalse
