@@ -3,6 +3,7 @@
 This is an iOS to do list app. The goal of this the app is Data persistans and this was achieved through various choices of implemention(UserDefaults, Core Data, Realm). Ultimatly Realm was the final implementation for data persistance.
 
 ## Features
+* Storyboard
 * Local persistence using Realm
 * MVC architecture 
 * Material design
